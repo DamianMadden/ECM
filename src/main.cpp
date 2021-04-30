@@ -24,8 +24,9 @@ enum errorState
     esSuccess = 0,
     esFailure = 1,
     esMemoryError = 2,
-    esSDLError = 3,
-    esD3DError = 4
+    esPointersError = 3,
+    esSDLError = 4,
+    esD3DError = 5
 };
 
 // Data
@@ -47,8 +48,10 @@ int SDL_main(int argc, char** args)
     ecmStatus status = {};
     ecmProfile profile = {};
 
-    attach("World of Warcraft");
-    loadAddresses("pointers.txt");
+    bool attached;
+    attached = attach("World of Warcraft");
+    if (!loadAddresses("pointers.txt"))
+        return esPointersError;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -84,8 +87,11 @@ int SDL_main(int argc, char** args)
     bool done = false;
     while (!done)
     {
-        if (!updateStatus(&status))
-            return esMemoryError;
+        if (attached)
+        {
+            if (!updateStatus(&status))
+                return esMemoryError;
+        }
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -114,10 +120,7 @@ int SDL_main(int argc, char** args)
         ImGui::Columns(4);
 
         if (ImGui::Button("Attach"))
-        {
-            if (!attach("World of Warcraft"))
-                return esMemoryError;
-        }
+            attached = attach("World of Warcraft");
 
         drawStatus(&status);
         ImGui::NextColumn();
@@ -144,7 +147,6 @@ int SDL_main(int argc, char** args)
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
         g_pSwapChain->Present(1, 0); // Present with vsync
-
     }
 
     ImGui_ImplDX11_Shutdown();
