@@ -30,7 +30,9 @@ struct ecmStatus
         bool targetting;
         char name[BUFFER_SIZE];
         int health;
+        int maxHealth;
         int mana;
+        int maxMana;
     } target;
 };
 

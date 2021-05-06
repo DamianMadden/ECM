@@ -7,12 +7,6 @@
 #include <fstream>
 using namespace std;
 
-enum actionType
-{
-    atCooldown = 0,
-    atThreshold = 1
-};
-
 bool loadProfile(const char* pFilename, ecmProfile *pProfile)
 {
     fstream inFile;
@@ -28,6 +22,7 @@ bool loadProfile(const char* pFilename, ecmProfile *pProfile)
         int x;
 
         inFile >> buffer
+            >> action.threshold
             >> action.cooldown
             >> action.casttime
             >> x;
@@ -39,7 +34,7 @@ bool loadProfile(const char* pFilename, ecmProfile *pProfile)
         case atCooldown:
             pProfile->actions.push_back(action);
             break;
-        case atThreshold:
+        default:
             pProfile->thresholds.push_back(action);
             break;
         }
@@ -59,17 +54,19 @@ bool saveProfile(const char* pFilename, ecmProfile *pProfile)
     for (unsigned int i = 0; i < pProfile->actions.size(); ++i)
     {
         outFile << pProfile->actions[i].toString()
+            << ' ' << pProfile->actions[i].threshold
             << ' ' << pProfile->actions[i].cooldown
             << ' ' << pProfile->actions[i].casttime
-            << ' ' << atCooldown
+            << ' ' << pProfile->actions[i].type
             << endl;
     }
     for (unsigned int i = 0; i < pProfile->thresholds.size(); ++i)
     {
         outFile << pProfile->thresholds[i].toString()
+            << ' ' << pProfile->thresholds[i].threshold
             << ' ' << pProfile->thresholds[i].cooldown
-            << ' ' << pProfile->actions[i].casttime
-            << ' ' << atThreshold
+            << ' ' << pProfile->thresholds[i].casttime
+            << ' ' << pProfile->thresholds[i].type
             << endl;
     }
 
@@ -78,26 +75,66 @@ bool saveProfile(const char* pFilename, ecmProfile *pProfile)
 
 void drawProfile(ecmProfile* pProfile)
 {
-    if (ImGui::Button("Load Profile"))
+    if (ImGui::Button("Save Profile"))
     {
-        // File Dialog
-    }
-
-    if (pProfile != nullptr)
-    {
-        for (unsigned int i = 0; i < pProfile->actions.size(); ++i)
+        if (!saveProfile("profile", pProfile))
         {
-            ImGui::Text(pProfile->actions.at(i).toString());
-            ImGui::SameLine();
-            char buffer[10] = {};
-            sprintf_s(buffer, "X##action%d", i);
-            if (ImGui::Button(buffer))
-                pProfile->actions.erase(pProfile->actions.begin() + i);
+            // Err
         }
     }
-    else
+    if (ImGui::Button("Load Profile"))
     {
-        ImGui::Text("Load a profile");
+        if (!loadProfile("profile", pProfile))
+        {
+            // Err
+        }
+    }
+
+    static ecmAction action = {};
+    static char keyBuffer[20] = {};
+    static int cooldown = 0, casttime;
+    ImGui::InputText("Key", keyBuffer, 20);
+    ImGui::InputInt("Cooldown MS", &cooldown);
+    ImGui::InputInt("Casttime MS", &casttime);
+    ImGui::InputFloat("Threshold", &action.threshold);
+
+    static actionType type = atNone;
+    
+    if (ImGui::Button("Add Action"))
+        type = atCooldown;
+
+    if (ImGui::Button("Add Health Threshold"))
+        type = atHealth;
+
+    if (ImGui::Button("Add Mana Threshold"))
+        type = atMana;
+
+    if (type != atNone)
+    {
+        action.code = SDL_GetKeyFromName(keyBuffer);
+
+        action.cooldown = cooldown;
+        action.casttime = casttime;
+        if (type == atCooldown)
+            pProfile->actions.push_back(action);
+        else
+            pProfile->thresholds.push_back(action);
+
+        type = atNone;
+    }
+
+    for (unsigned int i = 0; i < pProfile->actions.size(); ++i)
+    {
+        ImGui::Text(pProfile->actions.at(i).toString());
+        ImGui::Text("Cast: %d", pProfile->actions.at(i).casttime);
+        ImGui::Text("Cooldown: %d", pProfile->actions.at(i).cooldown);
+        ImGui::Text("Threshold: %f", pProfile->actions.at(i).threshold);
+
+        ImGui::SameLine();
+        char buffer[20] = {};
+        sprintf_s(buffer, "X##act%d", i);
+        if (ImGui::Button(buffer))
+            pProfile->actions.erase(pProfile->actions.begin() + i);
     }
 
 }

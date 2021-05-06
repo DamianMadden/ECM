@@ -3,29 +3,59 @@
 
 #include "imgui.h"
 #include "ecmMemory.h"
+#include "ecmStatus.h"
 
 #include <SDL.h>
 #include <WinUser.h>
 #include <fstream>
 using namespace std;
 
+enum actionType
+{
+    atCooldown = 0,
+    atHealth = 1,
+    atMana = 2,
+    atNone
+};
+
 struct ecmAction
 {
+    actionType type;
     WORD key;
     SDL_Keycode code;
     uint64_t cooldown;
     uint64_t casttime;
     uint64_t last;
+    float threshold;
 
     const char* toString()
     {
         return SDL_GetKeyName(this->code);
     }
 
-    bool doAction(uint64_t now)
+    bool doAction(ecmStatus *pStatus)
     {
+        auto now = SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
         if (now - this->last <= cooldown)
             return false;
+
+        switch (this->type)
+        {
+        case atHealth:
+            if (pStatus->health > this->threshold)
+                return false;
+            
+            break;
+
+        case atMana:
+            if (pStatus->mana > this->threshold)
+                return false;
+            
+            break;
+
+        default:
+            break;
+        }
 
         last = now;
         return keypress(key);

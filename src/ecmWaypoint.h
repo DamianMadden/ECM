@@ -11,7 +11,7 @@ struct waypoint
     float y;
     float z;
 
-    waypoint operator+(const waypoint& w)
+    waypoint operator+(waypoint& w)
     {
         return {
             this->x + w.x,
@@ -20,7 +20,7 @@ struct waypoint
         };
     }
 
-    waypoint operator-(const waypoint& w)
+    waypoint operator-(waypoint& w)
     {
         return {
             this->x - w.x,

@@ -17,11 +17,13 @@ struct ecmWaypoints
 {
     bool add;
     wayMode mode;
+    int currWaypoint;
     vector<waypoint> waypoints;
 };
 
 bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints);
 bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints);
 void drawWaypoints(ecmWaypoints* pWaypoints);
+waypoint next(const waypoint& pos, ecmWaypoints* pWaypoints);
 
 #endif

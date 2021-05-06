@@ -23,7 +23,6 @@ project "WowmaniaECM"
 	includedirs { "3rdParty/Blackbone/src/Blackbone/**" }
 	libdirs { "3rdParty/Blackbone/build/x64/**" }
 
-
 	filter "configurations:Debug"
 		defines { "DEBUG" }
 		symbols "On"

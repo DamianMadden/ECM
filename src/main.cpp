@@ -6,6 +6,7 @@
 #include "ecmStatus.h"
 #include "ecmProfile.h"
 #include "ecmMemory.h"
+#include "ecmControl.h"
 
 #include <d3d11.h>
 #include <SDL.h>
@@ -137,6 +138,8 @@ int SDL_main(int argc, char** args)
         ImGui::NextColumn();
         drawProfile(&profile);
         ImGui::End();
+
+        runControl(&status, &profile, &settings, &waypoints);
 
         ImGui::EndFrame();
 

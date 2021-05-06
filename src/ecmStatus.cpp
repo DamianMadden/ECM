@@ -5,8 +5,8 @@
 void drawStatus(ecmStatus *pStatus)
 {
     ImGui::Text("Name: %s", pStatus->charName);
-    ImGui::Text("Health: %d", pStatus->health);
-    ImGui::Text("Mana: %d", pStatus->mana);
+    ImGui::Text("Health: %d/%d", pStatus->health, pStatus->maxHealth);
+    ImGui::Text("Mana: %d/%d", pStatus->mana, pStatus->maxMana);
     ImGui::Text("Rotation: %.3f", pStatus->rotation);
 
     ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
@@ -17,8 +17,8 @@ void drawStatus(ecmStatus *pStatus)
     if (pStatus->target.targetting)
     {
         ImGui::Text("Name: %s", pStatus->target.name);
-        ImGui::Text("Health: %d", pStatus->target.health);
-        ImGui::Text("Mana: %d", pStatus->target.mana);
+        ImGui::Text("Health: %d/%d", pStatus->target.health, pStatus->target.maxHealth);
+        ImGui::Text("Mana: %d/%d", pStatus->target.mana, pStatus->target.maxMana);
     }
     else
     {

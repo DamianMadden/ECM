@@ -53,9 +53,16 @@ bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints)
 
 void drawWaypoints(ecmWaypoints *pWaypoints)
 {
+    if (ImGui::Button("Save Waypoints"))
+    {
+        // File Dialog
+        saveWaypoints("waypoints", pWaypoints);
+    }
+
     if (ImGui::Button("Load Waypoints"))
     {
         // File Dialog
+        loadWaypoints("waypoints", pWaypoints);
     }
 
     if (ImGui::Button("Add Waypoint"))
@@ -73,3 +80,48 @@ void drawWaypoints(ecmWaypoints *pWaypoints)
             pWaypoints->waypoints.erase(pWaypoints->waypoints.begin() + i);
     }
 }
+
+void nextWaypoint(ecmWaypoints* pWaypoints)
+{
+    waypoint next;
+    int highest = pWaypoints->waypoints.size() - 1;
+    pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+}
+
+bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
+{
+    waypoint next;
+    int highest = pWaypoints->waypoints.size() - 1;
+    pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+
+    
+    // calculate rotation necessary > threshold
+    
+    // keydown UP + rotate?
+}
+
+/*
+waypoint next(const waypoint& pos, ecmWaypoints* pWaypoints)
+{
+    // Just doing circle waypoints for now
+    // pWaypoints->mode
+
+    vector<waypoint>* pWP = &pWaypoints->waypoints;
+    int highest = pWP->size() - 1;
+    if (highest < 1)
+        return pWP->at(0);
+
+    int i = closest(pos, pWP);
+    int prevIndex = (highest + (i - 1)) % highest, nextIndex = (highest + (i + 1)) % highest;
+
+    float prevDist, nextDist;
+    prevDist = magSq(pos - pWP->at(prevIndex));
+    nextDist = magSq(pos - pWP->at(nextIndex));
+
+    if (nextDist > prevDist)
+        return pos;
+    else
+        return next
+
+}
+*/
