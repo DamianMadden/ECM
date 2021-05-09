@@ -25,9 +25,11 @@ struct ecmStatus
     waypoint pos;
     waypoint next;
 
+    bool running;
+
     struct
     {
-        bool targetting;
+        uint32_t targetting;
         char name[BUFFER_SIZE];
         int health;
         int maxHealth;
@@ -36,6 +38,6 @@ struct ecmStatus
     } target;
 };
 
-void drawStatus(ecmStatus* pStatus);
+void drawStatus(ecmStatus* pStatus, bool attached);
 
 #endif

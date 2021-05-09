@@ -9,7 +9,7 @@ Mana 00000000
 MaxMana 00000000
 Experience 00000000
 Alive 00000000
-Targetting 00000000
+Targetting 00BD07B0
 TarName 00000000
 TarHealth 00000000
 TarHealthMax 00000000

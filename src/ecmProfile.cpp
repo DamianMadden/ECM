@@ -7,6 +7,47 @@
 #include <fstream>
 using namespace std;
 
+WORD SDLKtoVK(SDL_Keycode key)
+{
+    switch (key)
+    {
+    case SDLK_RETURN:
+        return VK_RETURN;
+    case SDLK_ESCAPE:
+        return VK_ESCAPE;
+    case SDLK_BACKSPACE:
+        return VK_BACK;
+    case SDLK_TAB:
+        return VK_TAB;
+    case SDLK_SPACE:
+        return VK_SPACE;
+    case SDLK_0:
+        return '0';
+    case SDLK_1:
+        return '1';
+    case SDLK_2:
+        return '2';
+    case SDLK_3:
+        return '3';
+    case SDLK_4:
+        return '4';
+    case SDLK_5:
+        return '5';
+    case SDLK_6:
+        return '6';
+    case SDLK_7:
+        return '7';
+    case SDLK_8:
+        return '8';
+    case SDLK_9:
+        return '9';
+    case SDLK_F1:
+        return VK_F1;
+    }
+
+    return 0;
+}
+
 bool loadProfile(const char* pFilename, ecmProfile *pProfile)
 {
     fstream inFile;
@@ -28,6 +69,7 @@ bool loadProfile(const char* pFilename, ecmProfile *pProfile)
             >> x;
 
         action.code = SDL_GetKeyFromName(buffer.c_str());
+        action.key = SDLKtoVK(action.code);
 
         switch ((actionType)x)
         {
@@ -112,6 +154,7 @@ void drawProfile(ecmProfile* pProfile)
     if (type != atNone)
     {
         action.code = SDL_GetKeyFromName(keyBuffer);
+        action.key = SDLKtoVK(action.code);
 
         action.cooldown = cooldown;
         action.casttime = casttime;

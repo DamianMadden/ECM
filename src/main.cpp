@@ -123,23 +123,31 @@ int SDL_main(int argc, char** args)
         if (ImGui::Button("Attach"))
             attached = attach("World of Warcraft");
 
-        drawStatus(&status);
+        drawStatus(&status, attached);
         ImGui::NextColumn();
         drawSettings(&settings);
         ImGui::NextColumn();
-        drawWaypoints(&waypoints);
-
-        if (waypoints.add)
-        {
-            waypoints.waypoints.push_back(status.pos);
-            waypoints.add = false;
-        }
-
+        drawWaypoints(&waypoints, &status.pos);
         ImGui::NextColumn();
         drawProfile(&profile);
         ImGui::End();
 
-        runControl(&status, &profile, &settings, &waypoints);
+        if (status.running)
+        {
+            enableInput();
+            if (!runControl(&status, &profile, &settings, &waypoints))
+            {
+                attached = false;
+                status.running = false;
+            }
+            /* disableInput()*/
+        }
+
+        /*
+        float frametime = (1 / 60) - io.DeltaTime;
+        if (frametime > 0)
+            Sleep(DWORD(frametime / 1000));
+        */
 
         ImGui::EndFrame();
 

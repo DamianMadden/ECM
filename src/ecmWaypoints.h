@@ -23,7 +23,7 @@ struct ecmWaypoints
 
 bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints);
 bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints);
-void drawWaypoints(ecmWaypoints* pWaypoints);
-waypoint next(const waypoint& pos, ecmWaypoints* pWaypoints);
+void drawWaypoints(ecmWaypoints* pWaypoints, waypoint *pPos);
+bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints);
 
 #endif

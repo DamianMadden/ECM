@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 
-int closest(const waypoint& pos, vector<waypoint> *pWaypoints)
+int closest(waypoint& pos, vector<waypoint> *pWaypoints)
 {
     if (pWaypoints->size() < 1)
         return -1;

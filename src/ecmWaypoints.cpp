@@ -1,8 +1,11 @@
+#define _HAS_STD_BYTE 0
+
 #include <fstream>
 #include "imgui.h"
 #include "ecmWaypoint.h"
 #include "ecmWaypoints.h"
 #include "ecmStatus.h"
+#include "ecmMemory.h"
 
 bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints)
 {
@@ -51,7 +54,7 @@ bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints)
     return true;
 }
 
-void drawWaypoints(ecmWaypoints *pWaypoints)
+void drawWaypoints(ecmWaypoints *pWaypoints, waypoint *pPos)
 {
     if (ImGui::Button("Save Waypoints"))
     {
@@ -67,7 +70,7 @@ void drawWaypoints(ecmWaypoints *pWaypoints)
 
     if (ImGui::Button("Add Waypoint"))
     {
-        pWaypoints->add = true;
+        pWaypoints->waypoints.push_back(*pPos);
     }
 
     for (unsigned int i = 0; i < pWaypoints->waypoints.size(); ++i)
@@ -81,47 +84,33 @@ void drawWaypoints(ecmWaypoints *pWaypoints)
     }
 }
 
-void nextWaypoint(ecmWaypoints* pWaypoints)
-{
-    waypoint next;
-    int highest = pWaypoints->waypoints.size() - 1;
-    pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
-}
-
 bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
 {
-    waypoint next;
-    int highest = pWaypoints->waypoints.size() - 1;
-    pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+    // Rotate if necessary
+    float angle = rotationBetween(pStatus->pos, pWaypoints->waypoints[pWaypoints->currWaypoint]);
+    if (abs(angle) > 0.2)
+    {
+        if (angle < 0)
+        {
+            if (!keypress(VK_RIGHT))
+                return false;
+        }
+        else
+        {
+            if (!keypress(VK_LEFT))
+                return false;
+        }
+    }
 
-    
-    // calculate rotation necessary > threshold
-    
-    // keydown UP + rotate?
-}
+    // If close enough, advance to next waypoint
+    if (distance(pStatus->pos - pWaypoints->waypoints[pWaypoints->currWaypoint]) < 5)
+    {
+        unsigned int highest = pWaypoints->waypoints.size() - 1;
+        pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+    }
 
-/*
-waypoint next(const waypoint& pos, ecmWaypoints* pWaypoints)
-{
-    // Just doing circle waypoints for now
-    // pWaypoints->mode
+    if (!keypress(VK_UP))
+        return false;
 
-    vector<waypoint>* pWP = &pWaypoints->waypoints;
-    int highest = pWP->size() - 1;
-    if (highest < 1)
-        return pWP->at(0);
-
-    int i = closest(pos, pWP);
-    int prevIndex = (highest + (i - 1)) % highest, nextIndex = (highest + (i + 1)) % highest;
-
-    float prevDist, nextDist;
-    prevDist = magSq(pos - pWP->at(prevIndex));
-    nextDist = magSq(pos - pWP->at(nextIndex));
-
-    if (nextDist > prevDist)
-        return pos;
-    else
-        return next
-
-}
-*/
+    return true;
+    }

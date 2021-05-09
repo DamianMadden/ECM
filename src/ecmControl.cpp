@@ -8,52 +8,61 @@
 
 #include <vector>
 
-
+bool combat = false;
 
 bool runControl(ecmStatus *pStatus, ecmProfile *pProfile, ecmSettings *pSettings, ecmWaypoints *pWaypoints)
 {
 	if (pStatus->target.targetting)
 	{
-		keyup(VK_UP);
+		combat = true;
 
-		if (pStatus->target.health > 0)
+		vector<ecmAction>* pAct = &pProfile->thresholds;
+		for (unsigned int i = 0; i < pAct->size(); ++i)
 		{
-			vector<ecmAction>* pAct = &pProfile->thresholds;
-			for (unsigned int i = 0; i < pAct->size(); ++i)
-			{
-				if (pAct->at(i).doAction(pStatus))
-					return true;
-			}
-
-			pAct = &pProfile->actions;
-			for (unsigned int i = 0; i < pAct->size(); ++i)
-			{
-				if (pAct->at(i).doAction(pStatus))
-					return true;
-			}
+			if (pAct->at(i).doAction(pStatus))
+				return true;
 		}
-		else
+
+		pAct = &pProfile->actions;
+		for (unsigned int i = 0; i < pAct->size(); ++i)
 		{
-			//if lootMobs, skinMobs
-			keypress(VK_F12); // Interact
+			if (pAct->at(i).doAction(pStatus))
+				return true;
+		}
+
+		return true;
+	}
+	else if (combat)
+	{
+		if (pSettings->lootMobs)
+		{
+			if (!keypress(VK_F11)) // last target
+				return false;
+			if (!keypress(VK_F12)) // Interact
+				return false;
 
 			Sleep(5000);
 
-			keypress(VK_ESCAPE);
-
-			return true;
+			if (!keypress(VK_ESCAPE))
+				return false;
 		}
+
+		combat = false;
 	}
 	else if (pSettings->activeCombat)
 	{
-		keypress(VK_TAB);
+		if (!keypress(VK_TAB))
+			return false;
+		if (!move(pStatus, pWaypoints))
+			return false;
+	}
+	else
+	{
+		if (!move(pStatus, pWaypoints))
+			return false;
 	}
 
-	bool ret = move(pStatus, pWaypoints);
-
-	sleep(50);
-
-	return ret;
+	return true;
 	
 	/*if (pSettings->harvestMinerals || pSettings->harvestHerbs)
 	{

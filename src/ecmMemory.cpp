@@ -7,18 +7,19 @@ using namespace std;
 #include "ecmStatus.h"
 #include "ecmMemory.h"
 
-static HANDLE process;
-static unordered_map<string, LPCVOID> addresses;
+HANDLE process;
+HWND window;
+unordered_map<string, LPCVOID> addresses;
 
 bool attach(char* pWName)
 {
-    HWND hwnd = FindWindowA(NULL, pWName);
+    window = FindWindowA(NULL, pWName);
 
-    if (hwnd == NULL)
+    if (window == NULL)
         return false;
 
     DWORD procID;
-    GetWindowThreadProcessId(hwnd, &procID);
+    GetWindowThreadProcessId(window, &procID);
     process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procID);
 
     return true;
@@ -63,6 +64,8 @@ bool updateStatus(ecmStatus *pStatus)
     if (!read(addresses["CharY"], &pStatus->pos.y, sizeof(pStatus->pos.y))) return false;
     if (!read(addresses["CharZ"], &pStatus->pos.z, sizeof(pStatus->pos.z))) return false;
 
+    if (!read(addresses["Targetting"], &pStatus->target.targetting, sizeof(pStatus->target.targetting))) return false;
+
     /*
     if (!read(addresses["Health"], &pStatus->health, sizeof(pStatus->health))) return false;
     if (!read(addresses["MaxHealth"], &pStatus->maxHealth, sizeof(pStatus->maxHealth))) return false;
@@ -70,7 +73,6 @@ bool updateStatus(ecmStatus *pStatus)
     if (!read(addresses["MaxMana"], &pStatus->maxMana, sizeof(pStatus->maxMana))) return false;
     if (!read(addresses["Experience"], &pStatus->exp, sizeof(pStatus->exp))) return false;
     if (!read(addresses["Alive"], &pStatus->alive, sizeof(pStatus->alive))) return false;
-    if (!read(addresses["Targetting"], &pStatus->target, sizeof(pStatus->health))) return false;
     if (!read(addresses["TarName"], &pStatus->target.name, BUFFER_SIZE)) return false;
     if (!read(addresses["TarHealth"], &pStatus->target.health, sizeof(pStatus->target.mana))) return false;
     if (!read(addresses["TarMaxHealth"], &pStatus->target.mana, sizeof(pStatus->target.mana))) return false;
@@ -106,27 +108,30 @@ bool keydown(WORD key)
 
     in.type = INPUT_KEYBOARD;
     in.ki.wVk = key;
-
-    UINT uSent = SendInput(1, &in, sizeof(in));
+    UINT uSent = SendInput(1, &in, sizeof(INPUT));
 
     if (uSent != 1)
         return false;
 
-    return true;
-}
+    Sleep(50);
 
-bool keyup(WORD key)
-{
-    INPUT in;
-
-    in.type = INPUT_KEYBOARD;
-    in.ki.wVk = key;
     in.ki.dwFlags = KEYEVENTF_KEYUP;
-
-    UINT uSent = SendInput(1, &in, sizeof(in));
+    uSent = SendInput(1, &in, sizeof(INPUT));
 
     if (uSent != 1)
         return false;
 
     return true;
 }
+
+bool enableInput()
+{
+    return EnableWindow(window, true);
+}
+
+/*
+bool disableInput()
+{
+    return EnableWindow(window, false);
+}
+*/
