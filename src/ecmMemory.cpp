@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <WinUser.h>
 #include <unordered_map>
+#include <iostream>
 #include <fstream>
 using namespace std;
 
@@ -10,6 +11,15 @@ using namespace std;
 HANDLE process;
 HWND window;
 unordered_map<string, LPCVOID> addresses;
+unordered_map<WORD, int> keymap;
+
+void stopKeys()
+{
+    for (auto i = keymap.begin(); i != keymap.end(); ++i)
+        keyup(i->first);
+
+    keymap.clear();
+}
 
 bool attach(char* pWName)
 {
@@ -85,42 +95,33 @@ bool updateStatus(ecmStatus *pStatus)
 
 bool keypress(WORD key)
 {
-    INPUT inputs[2] = {};
-
-    inputs[0].type = INPUT_KEYBOARD;
-    inputs[0].ki.wVk = key;
-
-    inputs[1].type = INPUT_KEYBOARD;
-    inputs[1].ki.wVk = key;
-    inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
-
-    UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
-
-    if (uSent != ARRAYSIZE(inputs))
+    if (!PostMessage(window, WM_KEYDOWN, key, 0x00110001))
         return false;
 
-    return true;
+    return PostMessage(window, WM_KEYUP, key, 0xC0110001);
 }
 
 bool keydown(WORD key)
 {
-    INPUT in;
+    ++keymap[key];
 
-    in.type = INPUT_KEYBOARD;
-    in.ki.wVk = key;
-    UINT uSent = SendInput(1, &in, sizeof(INPUT));
+    if (keymap[key] == 1 || keymap[key] % 15 == 0)
+    {
+        if (!PostMessage(window, WM_KEYDOWN, key, 0x00110001))
+            return false;
+    }
+    return true;
+}
 
-    if (uSent != 1)
-        return false;
+bool keyup(WORD key)
+{
+    if (keymap[key] > 0)
+    {
+        if (!PostMessage(window, WM_KEYUP, key, 0xC0110001))
+            return false;
 
-    Sleep(50);
-
-    in.ki.dwFlags = KEYEVENTF_KEYUP;
-    uSent = SendInput(1, &in, sizeof(INPUT));
-
-    if (uSent != 1)
-        return false;
-
+        keymap[key] = 0;
+    }
     return true;
 }
 

@@ -10,6 +10,11 @@ struct ecmStatus
 {
     char charName[BUFFER_SIZE];
     float rotation;
+
+#ifdef DEBUG
+    float angle;
+#endif
+
     int health;
     int maxHealth;
     int mana;
@@ -23,7 +28,6 @@ struct ecmStatus
     int kills;
 
     waypoint pos;
-    waypoint next;
 
     bool running;
 

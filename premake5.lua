@@ -32,7 +32,7 @@ project "WowmaniaECM"
 		omitframepointer "On"
 		optimize "Full"
 	
-	libdirs { "$(DXSDK_DIR)/Lib/x64;" }
+	libdirs { "$(DXSDK_DIR)/Lib/x86" }
 	links { "d3d11.lib", "d3dcompiler.lib", "dxgi.lib", "dxguid.lib" }
 
 	filter { "files:3rdParty/**" }

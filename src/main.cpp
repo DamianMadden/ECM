@@ -9,6 +9,8 @@
 #include "ecmControl.h"
 
 #include <d3d11.h>
+#pragma comment(lib, "d3d11.lib")
+
 #include <SDL.h>
 #include <SDL_syswm.h>
 
@@ -18,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <thread>
 using namespace std;
 
 enum errorState
@@ -60,7 +63,7 @@ int SDL_main(int argc, char** args)
         return esSDLError;
     }
 
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window* window = SDL_CreateWindow("Executive Control Module", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     SDL_SysWMinfo wmInfo;
     SDL_VERSION(&wmInfo.version);
@@ -132,22 +135,13 @@ int SDL_main(int argc, char** args)
         drawProfile(&profile);
         ImGui::End();
 
-        if (status.running)
+        if (!runControl(&status, &profile, &settings, &waypoints))
         {
-            enableInput();
-            if (!runControl(&status, &profile, &settings, &waypoints))
-            {
-                attached = false;
-                status.running = false;
-            }
-            /* disableInput()*/
+            attached = false;
+            status.running = false;
         }
 
-        /*
-        float frametime = (1 / 60) - io.DeltaTime;
-        if (frametime > 0)
-            Sleep(DWORD(frametime / 1000));
-        */
+        Sleep(DWORD(1000/30));
 
         ImGui::EndFrame();
 
@@ -159,6 +153,8 @@ int SDL_main(int argc, char** args)
 
         g_pSwapChain->Present(1, 0); // Present with vsync
     }
+
+    stopKeys();
 
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplSDL2_Shutdown();

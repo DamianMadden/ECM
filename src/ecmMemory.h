@@ -16,6 +16,6 @@ bool updateStatus(ecmStatus *pStatus);
 bool keypress(WORD key);
 bool keydown(WORD key);	
 bool keyup(WORD key);
-bool enableInput();
+void stopKeys();
 
 #endif

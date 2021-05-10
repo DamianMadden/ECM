@@ -1,21 +1,37 @@
+#define _HAS_STD_BYTE 0
+
 #include "imgui.h"
 #include "ecmWaypoint.h"
+#include "ecmWaypoints.h"
 #include "ecmStatus.h"
+#include "ecmMemory.h"
 
 void drawStatus(ecmStatus *pStatus, bool attached)
 {
     if (attached)
     {
         if (ImGui::Button("Start"))
+        {
             pStatus->running = true;
+        }
+
         ImGui::SameLine();
         if (ImGui::Button("Stop"))
+        {
+            stopKeys();
             pStatus->running = false;
+        }
 
         ImGui::Text("Name: %s", pStatus->charName);
         ImGui::Text("Health: %d/%d", pStatus->health, pStatus->maxHealth);
         ImGui::Text("Mana: %d/%d", pStatus->mana, pStatus->maxMana);
+        
+        ImGui::Text("x: %.3f, y: %.3f, z: %.3f", pStatus->pos.x, pStatus->pos.y, pStatus->pos.z);
         ImGui::Text("Rotation: %.3f", pStatus->rotation);
+
+#ifdef DEBUG
+        ImGui::Text("Angle: %.3f", pStatus->angle);
+#endif
 
         ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
         ImGui::Text("Deaths: %d\t%d/hr", pStatus->deaths, pStatus->deaths);

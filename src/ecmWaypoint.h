@@ -1,6 +1,10 @@
 #ifndef ECMWAYPOINT_H
 #define ECMWAYPOINT_H
 
+#define PI 3.14159f
+#define TWOPI 6.28318f
+#define HALFPI 1.570795f
+
 #include <vector>
 #include <string>
 using namespace std;
@@ -49,7 +53,7 @@ inline float distance(const waypoint& w)
 
 inline float rotationBetween(const waypoint& w1, const waypoint& w2)
 {
-    return atan2f(w1.x - w2.x, w1.y - w2.y);
+    return HALFPI - atan2f(w1.x - w2.x, w1.y - w2.y);
 }
 
 int closest(const waypoint& pos, vector<waypoint>* pWaypoints);

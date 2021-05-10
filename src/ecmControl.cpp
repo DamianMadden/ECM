@@ -12,8 +12,18 @@ bool combat = false;
 
 bool runControl(ecmStatus *pStatus, ecmProfile *pProfile, ecmSettings *pSettings, ecmWaypoints *pWaypoints)
 {
+	if (!pStatus->running)
+		return true;
+
 	if (pStatus->target.targetting)
 	{
+		if (!keyup(VK_UP))
+			return false;
+		if (!keyup(VK_LEFT))
+			return false;
+		if (!keyup(VK_RIGHT))
+			return false;
+
 		combat = true;
 
 		vector<ecmAction>* pAct = &pProfile->thresholds;
@@ -53,14 +63,10 @@ bool runControl(ecmStatus *pStatus, ecmProfile *pProfile, ecmSettings *pSettings
 	{
 		if (!keypress(VK_TAB))
 			return false;
-		if (!move(pStatus, pWaypoints))
-			return false;
 	}
-	else
-	{
-		if (!move(pStatus, pWaypoints))
-			return false;
-	}
+
+	if (!move(pStatus, pWaypoints))
+		return false;
 
 	return true;
 	

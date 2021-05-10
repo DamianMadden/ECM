@@ -35,7 +35,7 @@ struct ecmAction
 
     bool doAction(ecmStatus *pStatus)
     {
-        auto now = SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+        auto now = (SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()) * 1000;
         if (now - this->last <= cooldown)
             return false;
 
