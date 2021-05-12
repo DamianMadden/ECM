@@ -15,6 +15,7 @@ enum actionType
     atCooldown = 0,
     atHealth = 1,
     atMana = 2,
+    atBuff = 3,
     atNone
 };
 

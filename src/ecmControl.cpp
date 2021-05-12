@@ -10,11 +10,8 @@
 
 bool combat = false;
 
-bool runControl(ecmStatus *pStatus, ecmProfile *pProfile, ecmSettings *pSettings, ecmWaypoints *pWaypoints)
+bool runControl(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings, ecmWaypoints* pWaypoints)
 {
-	if (!pStatus->running)
-		return true;
-
 	if (pStatus->target.targetting)
 	{
 		if (!keyup(VK_UP))
@@ -69,13 +66,23 @@ bool runControl(ecmStatus *pStatus, ecmProfile *pProfile, ecmSettings *pSettings
 		return false;
 
 	return true;
-	
-	/*if (pSettings->harvestMinerals || pSettings->harvestHerbs)
+}
+
+void controlThread(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings, ecmWaypoints* pWaypoints)
+{
+	while (!pStatus->done)
 	{
-		// scanForNodes
+		while (pStatus->running)
+		{
+			Sleep(DWORD(1000 / 30));
 
-	}*/
-
-	// No other action due, sleep or return and let main sleep
-
+			if (!runControl(pStatus, pProfile, pSettings, pWaypoints))
+			{
+				pStatus->running = false;
+				pStatus->attached = false;
+			}
+		}
+		stopKeys();
+		Sleep(DWORD(100));
+	}
 }

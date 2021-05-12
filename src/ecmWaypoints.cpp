@@ -135,7 +135,5 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
         pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
     }
 
-    
-
     return true;
 }

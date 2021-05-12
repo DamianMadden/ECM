@@ -125,14 +125,15 @@ bool keyup(WORD key)
     return true;
 }
 
-bool enableInput()
+bool chatString(string str)
 {
-    return EnableWindow(window, true);
-}
+    for (unsigned int i = 0; i < str.length(); ++i)
+    {
+        // Lookup character in table
+        // str.at(i);
+        //if (!keypress())
+        //    return false;
+    }
 
-/*
-bool disableInput()
-{
-    return EnableWindow(window, false);
+    return true;
 }
-*/

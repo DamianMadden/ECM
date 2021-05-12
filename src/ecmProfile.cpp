@@ -68,6 +68,9 @@ bool loadProfile(const char* pFilename, ecmProfile *pProfile)
             >> action.casttime
             >> x;
 
+        if (buffer.empty())
+            continue;
+
         action.code = SDL_GetKeyFromName(buffer.c_str());
         action.key = SDLKtoVK(action.code);
 

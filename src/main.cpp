@@ -52,8 +52,9 @@ int SDL_main(int argc, char** args)
     ecmStatus status = {};
     ecmProfile profile = {};
 
-    bool attached;
-    attached = attach("World of Warcraft");
+    thread botThread(controlThread, &status, &profile, &settings, &waypoints);
+
+    status.attached = attach("World of Warcraft");
     if (!loadAddresses("pointers.txt"))
         return esPointersError;
 
@@ -88,10 +89,10 @@ int SDL_main(int argc, char** args)
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    bool done = false;
-    while (!done)
+    status.done = false;
+    while (!status.done)
     {
-        if (attached)
+        if (status.attached)
         {
             if (!updateStatus(&status))
                 return esMemoryError;
@@ -102,9 +103,9 @@ int SDL_main(int argc, char** args)
         {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
-                done = true;
+                status.done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-                done = true;
+                status.done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED && event.window.windowID == SDL_GetWindowID(window))
             {
                 CleanupRenderTarget();
@@ -124,9 +125,9 @@ int SDL_main(int argc, char** args)
         ImGui::Columns(4);
 
         if (ImGui::Button("Attach"))
-            attached = attach("World of Warcraft");
+            status.attached = attach("World of Warcraft");
 
-        drawStatus(&status, attached);
+        drawStatus(&status);
         ImGui::NextColumn();
         drawSettings(&settings);
         ImGui::NextColumn();
@@ -134,14 +135,6 @@ int SDL_main(int argc, char** args)
         ImGui::NextColumn();
         drawProfile(&profile);
         ImGui::End();
-
-        if (!runControl(&status, &profile, &settings, &waypoints))
-        {
-            attached = false;
-            status.running = false;
-        }
-
-        Sleep(DWORD(1000/30));
 
         ImGui::EndFrame();
 
@@ -155,6 +148,7 @@ int SDL_main(int argc, char** args)
     }
 
     stopKeys();
+    botThread.join();
 
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplSDL2_Shutdown();

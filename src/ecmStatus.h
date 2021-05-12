@@ -30,6 +30,8 @@ struct ecmStatus
     waypoint pos;
 
     bool running;
+    bool attached;
+    bool done;
 
     struct
     {
@@ -42,6 +44,6 @@ struct ecmStatus
     } target;
 };
 
-void drawStatus(ecmStatus* pStatus, bool attached);
+void drawStatus(ecmStatus* pStatus);
 
 #endif

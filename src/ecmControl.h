@@ -16,6 +16,6 @@ enum actionState
 	asLooting
 };
 
-bool runControl(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings, ecmWaypoints* pWaypoints);
+void controlThread(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings, ecmWaypoints* pWaypoints);
 
 #endif

@@ -6,9 +6,9 @@
 #include "ecmStatus.h"
 #include "ecmMemory.h"
 
-void drawStatus(ecmStatus *pStatus, bool attached)
+void drawStatus(ecmStatus *pStatus)
 {
-    if (attached)
+    if (pStatus->attached && !pStatus->done)
     {
         if (ImGui::Button("Start"))
         {
@@ -18,7 +18,6 @@ void drawStatus(ecmStatus *pStatus, bool attached)
         ImGui::SameLine();
         if (ImGui::Button("Stop"))
         {
-            stopKeys();
             pStatus->running = false;
         }
 
@@ -33,6 +32,7 @@ void drawStatus(ecmStatus *pStatus, bool attached)
         ImGui::Text("Angle: %.3f", pStatus->angle);
 #endif
 
+        // TODO: per hour stuff
         ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
         ImGui::Text("Deaths: %d\t%d/hr", pStatus->deaths, pStatus->deaths);
         ImGui::Text("Loots: %d\t%d/hr", pStatus->loots, pStatus->loots);
