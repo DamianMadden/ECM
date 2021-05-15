@@ -13,6 +13,25 @@ HWND window;
 unordered_map<string, LPCVOID> addresses;
 unordered_map<WORD, int> keymap;
 
+WORD CHARtoVK(char key)
+{
+    if (key >= '0' && key <= '9')
+        return key;
+    if (key >= 'A' && key <= 'Z')
+        return key;
+    if (key >= 'a' && key <= 'z')
+        return key;
+
+    switch (key)
+    {
+    case '/':
+        return VK_DIVIDE;
+    case ' ':
+        return VK_SPACE;
+    default:
+        return 0;
+    }
+}
 void stopKeys()
 {
     for (auto i = keymap.begin(); i != keymap.end(); ++i)
@@ -97,6 +116,8 @@ bool keypress(WORD key)
 {
     if (!PostMessage(window, WM_KEYDOWN, key, 0x00110001))
         return false;
+    
+    Sleep(15);
 
     return PostMessage(window, WM_KEYUP, key, 0xC0110001);
 }
@@ -127,13 +148,19 @@ bool keyup(WORD key)
 
 bool chatString(string str)
 {
+    if (!keypress(VK_RETURN))
+        return false;
+
+    Sleep(25);
+
     for (unsigned int i = 0; i < str.length(); ++i)
     {
-        // Lookup character in table
-        // str.at(i);
-        //if (!keypress())
-        //    return false;
+        if (!keypress(CHARtoVK(str.at(i))))
+            return false;
     }
+    
+    if (!keypress(VK_RETURN))
+        return false;
 
     return true;
 }

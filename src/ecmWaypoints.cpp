@@ -22,9 +22,18 @@ bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints)
 
     for (unsigned int i = 0; i < pWaypoints->waypoints.size(); ++i)
     {
-        outFile << pWaypoints->waypoints[i].x << " "
-                << pWaypoints->waypoints[i].y << " "
-                << pWaypoints->waypoints[i].z << endl;
+        waypoint *pPoint = &pWaypoints->waypoints[i];
+        outFile << pPoint->type << " ";
+
+        switch (pPoint->type)
+        {
+        case wtNormal:
+            outFile << pPoint->x << " "
+                    << pPoint->y << " "
+                    << pPoint->z << endl;
+        case wtCommand:
+            outFile << string(pPoint->command) << endl;
+        }
     }
 
     outFile.close();
@@ -40,15 +49,26 @@ bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints)
     if (!inFile.is_open())
         return false;
 
-    int x;
-    inFile >> x;
-
-    pWaypoints->mode = (wayMode)x;
+    int mode;
+    inFile >> mode;
+    pWaypoints->mode = (wayMode)mode;
 
     waypoint buffer;
     while (!inFile.eof())
     {
-        inFile >> buffer.x >> buffer.y >> buffer.z;
+        int y;
+        inFile >> y;
+
+        buffer.type = (pointTypes)y;
+
+        switch (buffer.type)
+        {
+        case wtNormal:
+            inFile >> buffer.x >> buffer.y >> buffer.z;
+        case wtCommand:
+            inFile >> buffer.command;
+        }
+        
         pWaypoints->waypoints.push_back(buffer);
     }
 
@@ -76,6 +96,16 @@ void drawWaypoints(ecmWaypoints *pWaypoints, waypoint *pPos)
         pWaypoints->waypoints.push_back(*pPos);
     }
 
+    static char commandbuffer[100] = {};
+    ImGui::InputText("Command", commandbuffer, 100);
+    if (ImGui::Button("Add Command"))
+    {
+        waypoint command = {};
+        command.command = string(commandbuffer);
+        command.type = wtCommand;
+        pWaypoints->waypoints.push_back(command);
+    }
+
     for (unsigned int i = 0; i < pWaypoints->waypoints.size(); ++i)
     {
         ImGui::Text(pWaypoints->waypoints.at(i).toString().c_str());
@@ -89,6 +119,13 @@ void drawWaypoints(ecmWaypoints *pWaypoints, waypoint *pPos)
 
 bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
 {
+    unsigned int highest = pWaypoints->waypoints.size();
+    while (pWaypoints->waypoints[pWaypoints->currWaypoint].type == wtCommand)
+    {
+        chatString(pWaypoints->waypoints[pWaypoints->currWaypoint].command);
+        pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+    }
+
     // Rotate if necessary
     float angle = rotationBetween(pStatus->pos, pWaypoints->waypoints[pWaypoints->currWaypoint]);
     angle = fmod(angle, TWOPI);
@@ -96,11 +133,7 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
     float difference = pStatus->rotation + PI - angle;
     difference = fmod(difference, TWOPI);
 
-#ifdef DEBUG
-    pStatus->angle = angle;
-#endif
-    
-    if (difference > .35)
+    if (difference > .25)
     {
         if (!keyup(VK_UP))
             return false;
@@ -109,7 +142,7 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
         if (!keydown(VK_RIGHT))
             return false;
     }
-    else if (difference < -.35)
+    else if (difference < -.25)
     {
         if (!keyup(VK_UP))
             return false;
@@ -130,10 +163,7 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
 
     // If close enough, advance to next waypoint
     if (distance(pStatus->pos - pWaypoints->waypoints[pWaypoints->currWaypoint]) < 10)
-    {
-        unsigned int highest = pWaypoints->waypoints.size() - 1;
         pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
-    }
 
     return true;
 }

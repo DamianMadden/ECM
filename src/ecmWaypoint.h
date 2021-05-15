@@ -9,35 +9,53 @@
 #include <string>
 using namespace std;
 
+enum pointTypes
+{
+    wtNormal,
+    wtCommand,
+    wtFlying
+};
+
 struct waypoint
 {
+    pointTypes type;
+
     float x;
     float y;
     float z;
 
+    string command;
+
     waypoint operator+(waypoint& w)
     {
-        return {
-            this->x + w.x,
-            this->y + w.y,
-            this->z + w.z
-        };
+        this->x += w.x;
+        this->y += w.y;
+        this->z += w.z;
+        return *this;
     }
 
     waypoint operator-(waypoint& w)
     {
-        return {
-            this->x - w.x,
-            this->y - w.y,
-            this->z - w.z
-        };
+        this->x -= w.x;
+        this->y -= w.y;
+        this->z -= w.z;
+        return *this;
     }
 
     string toString()
     {
         char buffer[64] = {};
-        sprintf_s(buffer, "%.3f, %.3f, %.3f", this->x, this->y, this->z);
-        return string(buffer);
+        switch (this->type)
+        {
+        case wtNormal:
+            sprintf_s(buffer, "%.3f, %.3f, %.3f", this->x, this->y, this->z);
+            return string(buffer);
+        case wtCommand:
+            return this->command;
+        default:
+            return string();
+        }
+        
     }
 };
 
@@ -56,6 +74,6 @@ inline float rotationBetween(const waypoint& w1, const waypoint& w2)
     return HALFPI - atan2f(w1.x - w2.x, w1.y - w2.y);
 }
 
-int closest(const waypoint& pos, vector<waypoint>* pWaypoints);
+int closest(waypoint* pPos, vector<waypoint>* pWaypoints);
 
 #endif

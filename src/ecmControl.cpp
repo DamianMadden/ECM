@@ -3,6 +3,7 @@
 #include "ecmControl.h"
 #include "ecmStatus.h"
 #include "ecmProfile.h"
+#include "ecmWaypoint.h"
 #include "ecmWaypoints.h"
 #include "ecmSettings.h"
 
@@ -72,17 +73,17 @@ void controlThread(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSetti
 {
 	while (!pStatus->done)
 	{
+		pWaypoints->currWaypoint = closest(&pStatus->pos, &pWaypoints->waypoints);
 		while (pStatus->running)
 		{
-			Sleep(DWORD(1000 / 30));
-
 			if (!runControl(pStatus, pProfile, pSettings, pWaypoints))
 			{
 				pStatus->running = false;
 				pStatus->attached = false;
 			}
+			Sleep(DWORD(1000 / 30));
 		}
 		stopKeys();
-		Sleep(DWORD(100));
+		Sleep(DWORD(200));
 	}
 }

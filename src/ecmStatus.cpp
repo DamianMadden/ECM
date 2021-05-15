@@ -28,10 +28,6 @@ void drawStatus(ecmStatus *pStatus)
         ImGui::Text("x: %.3f, y: %.3f, z: %.3f", pStatus->pos.x, pStatus->pos.y, pStatus->pos.z);
         ImGui::Text("Rotation: %.3f", pStatus->rotation);
 
-#ifdef DEBUG
-        ImGui::Text("Angle: %.3f", pStatus->angle);
-#endif
-
         // TODO: per hour stuff
         ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
         ImGui::Text("Deaths: %d\t%d/hr", pStatus->deaths, pStatus->deaths);
