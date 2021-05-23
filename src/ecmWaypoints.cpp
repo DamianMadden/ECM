@@ -9,6 +9,7 @@ using namespace std;
 #include "ecmWaypoints.h"
 #include "ecmStatus.h"
 #include "ecmMemory.h"
+#include "ecmSettings.h"
 
 bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints)
 {
@@ -135,29 +136,29 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
 
     if (difference > .25)
     {
-        if (!keyup(VK_UP))
+        if (!keyup(GetKey(kbForward)))
             return false;
-        if (!keyup(VK_LEFT))
+        if (!keyup(GetKey(kbLeft)))
             return false;
-        if (!keydown(VK_RIGHT))
+        if (!keydown(GetKey(kbRight)))
             return false;
     }
     else if (difference < -.25)
     {
-        if (!keyup(VK_UP))
+        if (!keyup(GetKey(kbForward)))
             return false;
-        if (!keyup(VK_RIGHT))
+        if (!keyup(GetKey(kbRight)))
             return false;
-        if (!keydown(VK_LEFT))
+        if (!keydown(GetKey(kbLeft)))
             return false;
     }
     else
     {
-        if (!keyup(VK_LEFT))
+        if (!keyup(GetKey(kbLeft)))
             return false;
-        if (!keyup(VK_RIGHT))
+        if (!keyup(GetKey(kbRight)))
             return false;
-        if (!keydown(VK_UP))
+        if (!keydown(GetKey(kbForward)))
             return false;
     }
 

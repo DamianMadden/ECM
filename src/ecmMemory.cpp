@@ -101,12 +101,6 @@ bool updateStatus(ecmStatus *pStatus)
     if (!read(addresses["Mana"], &pStatus->mana, sizeof(pStatus->mana))) return false;
     if (!read(addresses["MaxMana"], &pStatus->maxMana, sizeof(pStatus->maxMana))) return false;
     if (!read(addresses["Experience"], &pStatus->exp, sizeof(pStatus->exp))) return false;
-    if (!read(addresses["Alive"], &pStatus->alive, sizeof(pStatus->alive))) return false;
-    if (!read(addresses["TarName"], &pStatus->target.name, BUFFER_SIZE)) return false;
-    if (!read(addresses["TarHealth"], &pStatus->target.health, sizeof(pStatus->target.mana))) return false;
-    if (!read(addresses["TarMaxHealth"], &pStatus->target.mana, sizeof(pStatus->target.mana))) return false;
-    if (!read(addresses["TarMana"], &pStatus->target.health, sizeof(pStatus->target.mana))) return false;
-    if (!read(addresses["TarMaxMana"], &pStatus->target.mana, sizeof(pStatus->target.mana))) return false;
     */
 
     return true;

@@ -29,10 +29,10 @@ void drawStatus(ecmStatus *pStatus)
         ImGui::Text("Rotation: %.3f", pStatus->rotation);
 
         // TODO: per hour stuff
-        ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
+        /* ImGui::Text("Experience: %d\t%d/hr", pStatus->exp, pStatus->exp);
         ImGui::Text("Deaths: %d\t%d/hr", pStatus->deaths, pStatus->deaths);
         ImGui::Text("Loots: %d\t%d/hr", pStatus->loots, pStatus->loots);
-        ImGui::Text("Kills: %d\t%d/hr", pStatus->kills, pStatus->kills);
+        ImGui::Text("Kills: %d\t%d/hr", pStatus->kills, pStatus->kills);*/
 
         if (pStatus->target.targetting)
         {

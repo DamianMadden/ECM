@@ -23,7 +23,7 @@ struct ecmAction
 {
     actionType type;
     WORD key;
-    SDL_Keycode code;
+    SDL_Scancode code;
     uint64_t cooldown;
     uint64_t casttime;
     uint64_t last;

@@ -9,17 +9,17 @@
 
 #include <vector>
 
-bool combat = false;
-
 bool runControl(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings, ecmWaypoints* pWaypoints)
 {
+	static bool combat = false;
+
 	if (pStatus->target.targetting)
 	{
-		if (!keyup(VK_UP))
+		if (!keyup(GetKey(kbForward)))
 			return false;
-		if (!keyup(VK_LEFT))
+		if (!keyup(GetKey(kbLeft)))
 			return false;
-		if (!keyup(VK_RIGHT))
+		if (!keyup(GetKey(kbRight)))
 			return false;
 
 		combat = true;
@@ -44,22 +44,21 @@ bool runControl(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSettings
 	{
 		if (pSettings->lootMobs)
 		{
-			if (!keypress(VK_F11)) // last target
+			if (!keypress(GetKey(kbLastTarget))) // last target
 				return false;
-			if (!keypress(VK_F12)) // Interact
+			if (!keypress(GetKey(kbLoot))) // Interact
 				return false;
 
 			Sleep(5000);
 
-			if (!keypress(VK_ESCAPE))
+			if (!keypress(GetKey(kbUntarget)))
 				return false;
 		}
-
 		combat = false;
 	}
 	else if (pSettings->activeCombat)
 	{
-		if (!keypress(VK_TAB))
+		if (!keypress(GetKey(kbTarget)))
 			return false;
 	}
 
