@@ -158,3 +158,18 @@ bool chatString(string str)
 
     return true;
 }
+
+bool click(WORD x, WORD y)
+{
+    uint32_t pos = (y << 16) + x;
+
+    if (!PostMessage(window, WM_LBUTTONDOWN, 1, pos))
+        return false;
+
+    Sleep(5);
+
+    if (!PostMessage(window, WM_LBUTTONUP, 0, pos))
+        return false;
+
+    return true;
+}

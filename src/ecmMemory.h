@@ -18,5 +18,6 @@ bool keydown(WORD key);
 bool keyup(WORD key);
 void stopKeys();
 bool chatString(string str);
+bool click(WORD x, WORD y);
 
 #endif

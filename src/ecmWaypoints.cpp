@@ -29,11 +29,18 @@ bool saveWaypoints(char* pFile, ecmWaypoints* pWaypoints)
         switch (pPoint->type)
         {
         case wtNormal:
+        case wtFlying:
             outFile << pPoint->x << " "
                     << pPoint->y << " "
                     << pPoint->z << endl;
+            break;
         case wtCommand:
             outFile << string(pPoint->command) << endl;
+            break;
+        case wtClick:
+            outFile << pPoint->x << " "
+                    << pPoint->y << endl;
+            break;
         }
     }
 
@@ -65,9 +72,14 @@ bool loadWaypoints(char* pFile, ecmWaypoints* pWaypoints)
         switch (buffer.type)
         {
         case wtNormal:
+        case wtFlying:
             inFile >> buffer.x >> buffer.y >> buffer.z;
+            break;
         case wtCommand:
             inFile >> buffer.command;
+            break;
+        case wtClick:
+            inFile >> buffer.x >> buffer.y;
         }
         
         pWaypoints->waypoints.push_back(buffer);
@@ -124,6 +136,11 @@ bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
     while (pWaypoints->waypoints[pWaypoints->currWaypoint].type == wtCommand)
     {
         chatString(pWaypoints->waypoints[pWaypoints->currWaypoint].command);
+        pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
+    }
+    while (pWaypoints->waypoints[pWaypoints->currWaypoint].type == wtClick)
+    {
+        click((WORD)pWaypoints->waypoints[pWaypoints->currWaypoint].x, (WORD)pWaypoints->waypoints[pWaypoints->currWaypoint].y);
         pWaypoints->currWaypoint = (highest + (pWaypoints->currWaypoint + 1)) % highest;
     }
 

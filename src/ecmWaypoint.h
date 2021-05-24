@@ -13,7 +13,8 @@ enum pointTypes
 {
     wtNormal,
     wtCommand,
-    wtFlying
+    wtFlying,
+    wtClick
 };
 
 struct waypoint
