@@ -7,6 +7,9 @@ Starting development on a quick bot for MMORPGs, should be much more generalisab
 Presently only targetting Windows, may change later.
 
 TODO
- Change bot interface
- File dialogs
- Process/window selector
+
+1 Change bot interface
+ 
+2 File dialogs
+ 
+3 Process/window selector
