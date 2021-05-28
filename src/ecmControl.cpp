@@ -78,7 +78,7 @@ void controlThread(ecmStatus* pStatus, ecmProfile* pProfile, ecmSettings* pSetti
 			if (!runControl(pStatus, pProfile, pSettings, pWaypoints))
 			{
 				pStatus->running = false;
-				pStatus->attached = false;
+				detach();
 			}
 			Sleep(DWORD(1000 / 30));
 		}

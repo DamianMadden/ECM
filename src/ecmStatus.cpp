@@ -8,7 +8,7 @@
 
 void drawStatus(ecmStatus *pStatus)
 {
-    if (pStatus->attached && !pStatus->done)
+    if (attached() && !pStatus->done)
     {
         if (ImGui::Button("Start"))
         {
@@ -48,5 +48,6 @@ void drawStatus(ecmStatus *pStatus)
     else
     {
         ImGui::Text("Not attached to process");
+        listWindows();
     }
 }

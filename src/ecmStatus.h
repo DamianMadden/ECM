@@ -30,7 +30,6 @@ struct ecmStatus
     waypoint pos;
 
     bool running;
-    bool attached;
     bool done;
 
     struct

@@ -54,7 +54,6 @@ int SDL_main(int argc, char** args)
 
     thread botThread(controlThread, &status, &profile, &settings, &waypoints);
 
-    status.attached = attach("World of Warcraft");
     if (!loadAddresses("pointers.txt"))
         return esPointersError;
 
@@ -92,7 +91,7 @@ int SDL_main(int argc, char** args)
     status.done = false;
     while (!status.done)
     {
-        if (status.attached)
+        if (attached())
         {
             if (!updateStatus(&status))
                 return esMemoryError;
@@ -124,8 +123,8 @@ int SDL_main(int argc, char** args)
         ImGui::Begin("ECM");
         ImGui::Columns(4);
 
-        if (ImGui::Button("Attach"))
-            status.attached = attach("World of Warcraft");
+        //if (ImGui::Button("Attach"))
+        //    attach("World of Warcraft");
 
         drawStatus(&status);
         ImGui::NextColumn();

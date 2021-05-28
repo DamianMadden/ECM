@@ -13,6 +13,16 @@ HWND window;
 unordered_map<string, LPCVOID> addresses;
 unordered_map<WORD, int> keymap;
 
+bool attached()
+{
+    return process != 0;
+}
+
+void detach()
+{
+    process = NULL;
+}
+
 WORD CHARtoVK(char key)
 {
     if (key >= '0' && key <= '9')
@@ -32,12 +42,37 @@ WORD CHARtoVK(char key)
         return 0;
     }
 }
+
 void stopKeys()
 {
     for (auto i = keymap.begin(); i != keymap.end(); ++i)
         keyup(i->first);
 
     keymap.clear();
+}
+
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
+{
+    if (!IsWindowVisible(hwnd))
+        return true;
+
+    char buffer[100];
+    GetWindowTextA(hwnd, buffer, 100);
+    
+    if (buffer[0] != '\0')
+    {
+        if (ImGui::Button(buffer))
+            attach(buffer);
+    }
+
+    return true;
+}
+
+bool listWindows()
+{
+    ImGui::TextUnformatted("Process List");
+    ImGui::Separator();
+    return EnumWindows(EnumWindowsProc, NULL);
 }
 
 bool attach(char* pWName)
