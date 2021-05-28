@@ -1,3 +1,5 @@
+#pragma warning (disable : 4312 )
+
 #include <Windows.h>
 #include <WinUser.h>
 #include <unordered_map>

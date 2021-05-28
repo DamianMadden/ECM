@@ -1,8 +1,26 @@
 workspace "ECM"
-	configurations { "Debug", "Release" }
 	startproject "WowmaniaECM"
+	configurations { "Debug", "Release" }
+	platforms { "Win64" }
+
+	--[[
+	filter { "platforms:Win32" }
+		system "Windows"
+		architecture "x86"
+		libdirs { "3rdParty/SDL2-2.0.14/lib/x86" }
+		libdirs { "$(DXSDK_DIR)/Lib/x86" }
+	]]
 	
-project "WowmaniaECM"
+	filter { "platforms:Win64" }
+		system "Windows"
+		architecture "x86_64"
+		libdirs { "3rdParty/SDL2-2.0.14/lib/x64" }
+		libdirs { "$(DXSDK_DIR)/Lib/x64" }
+	
+project "ECM"
+	targetdir "bin"
+	debugdir "bin"
+	
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
@@ -12,16 +30,11 @@ project "WowmaniaECM"
 	
 	files { "3rdParty/SDL2-2.0.14/include/*.cpp", "3rdParty/SDL2-2.0.14/include/*.h" }
 	includedirs { "3rdParty/SDL2-2.0.14/include" }
-	libdirs { "3rdParty/SDL2-2.0.14/lib/x86" }
 	links { "SDL2", "SDL2main" }
-
+			
 	defines { "IMGUI_DISABLE_OBSOLETE_FUNCTIONS" }
 	files { "3rdParty/imgui/*.cpp", "3rdParty/imgui/*.h" }
 	includedirs { "3rdParty/imgui" }
-	
-	files { "3rdParty/Blackbone/src/Blackbone**.cpp", "3rdParty/Blackbone/src/Blackbone**.h" }
-	includedirs { "3rdParty/Blackbone/src/Blackbone/**" }
-	libdirs { "3rdParty/Blackbone/build/x64/**" }
 
 	filter "configurations:Debug"
 		defines { "DEBUG" }
@@ -31,20 +44,12 @@ project "WowmaniaECM"
 		defines { "NDEBUG" }
 		omitframepointer "On"
 		optimize "Full"
-	
-	libdirs { "$(DXSDK_DIR)/Lib/x86" }
+		
 	links { "d3d11.lib", "d3dcompiler.lib", "dxgi.lib", "dxguid.lib" }
 
 	filter { "files:3rdParty/**" }
 		warnings "Off"
 
-	targetdir "builds"
-	debugdir "builds"
-
-project "WowmaniaECMTests"
-	kind "ConsoleApp"
-	language "C++"
-	files {"test/*.cpp" }
+os.execute("mkdir bin")
+os.copyfile("3rdParty/SDL2-2.0.14/lib/x64/SDL2.dll", "bin/SDL2.dll")
 	
-	files { "3rdParty/googletest/**.h", "3rdParty/googletest/**.hpp", "3rdParty/googletest/src/gtest-all.cc" }
-	includedirs { "3rdParty/googletest/include", "3rdParty/googletest" }

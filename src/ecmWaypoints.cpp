@@ -132,7 +132,7 @@ void drawWaypoints(ecmWaypoints *pWaypoints, waypoint *pPos)
 
 bool move(ecmStatus* pStatus, ecmWaypoints* pWaypoints)
 {
-    unsigned int highest = pWaypoints->waypoints.size();
+    unsigned int highest = (unsigned int)pWaypoints->waypoints.size();
     while (pWaypoints->waypoints[pWaypoints->currWaypoint].type == wtCommand)
     {
         chatString(pWaypoints->waypoints[pWaypoints->currWaypoint].command);
